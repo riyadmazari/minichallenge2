@@ -1,40 +1,69 @@
-import 'package:flutter/foundation.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:convert';
+// lib/core/providers/rated_provider.dart
 
-import '../models/rated_item.dart';
+import 'package:flutter/foundation.dart';
+import 'package:hive/hive.dart';
+import '../models/rating.dart';
 
 class RatedProvider with ChangeNotifier {
-  List<RatedItem> _items = [];
+  List<Rating> _ratings = [];
+  late Box<Rating> _ratingsBox;
 
-  List<RatedItem> get items => _items;
+  List<Rating> get items => _ratings;
 
   RatedProvider() {
-    _loadRated();
+    _initRatings();
   }
 
-  Future<void> _loadRated() async {
-    final prefs = await SharedPreferences.getInstance();
-    final data = prefs.getString('ratedItems') ?? '[]';
-    final jsonList = jsonDecode(data) as List;
-    _items = jsonList.map((m) => RatedItem.fromMap(m)).toList();
+  Future<void> _initRatings() async {
+    _ratingsBox = Hive.box<Rating>('ratings');
+    _ratings = _ratingsBox.values.toList();
     notifyListeners();
   }
 
-  Future<void> _saveRated() async {
-    final prefs = await SharedPreferences.getInstance();
-    final data = jsonEncode(_items.map((i) => i.toMap()).toList());
-    await prefs.setString('ratedItems', data);
-  }
-
-  Future<void> addOrUpdateRating(RatedItem item) async {
-    final index = _items.indexWhere((r) => r.id == item.id && r.isMovie == item.isMovie);
-    if (index >= 0) {
-      _items[index] = item;
+  Future<void> addOrUpdateRating(Rating rating) async {
+    // Check if rating exists
+    final index = _ratings.indexWhere(
+      (r) => r.id == rating.id && r.isMovie == rating.isMovie,
+    );
+    if (index != -1) {
+      // Update existing rating
+      final key = _ratingsBox.keyAt(index);
+      await _ratingsBox.put(key, rating);
+      _ratings[index] = rating;
     } else {
-      _items.add(item);
+      // Add new rating
+      await _ratingsBox.add(rating);
+      _ratings = _ratingsBox.values.toList();
     }
-    await _saveRated();
     notifyListeners();
+  }
+
+  double getRating(int id, bool isMovie) {
+    final rating = _ratings.firstWhere(
+      (r) => r.id == id && r.isMovie == isMovie,
+      orElse: () => Rating(
+        id: id,
+        isMovie: isMovie,
+        title: '',
+        posterPath: '',
+        userRating: 0.0,
+      ),
+    );
+    return rating.userRating;
+  }
+
+  Future<void> removeRating(int id, bool isMovie) async {
+    final key = _ratingsBox.keys.firstWhere(
+      (k) {
+        final r = _ratingsBox.get(k);
+        return r != null && r.id == id && r.isMovie == isMovie;
+      },
+      orElse: () => null,
+    );
+    if (key != null) {
+      await _ratingsBox.delete(key);
+      _ratings = _ratingsBox.values.toList();
+      notifyListeners();
+    }
   }
 }

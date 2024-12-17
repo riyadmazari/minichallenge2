@@ -1,9 +1,9 @@
 // lib/features/search/widgets/search_results_list.dart
 
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-
 import '../../../core/models/search_result.dart';
+import '../../details/pages/movie_detail_screen.dart';
+import '../../details/pages/tv_show_detail_screen.dart';
 import '../../../core/utils/constants.dart';
 
 class SearchResultsList extends StatelessWidget {
@@ -14,36 +14,50 @@ class SearchResultsList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (results.isEmpty) {
-      return const Center(child: Text('No results'));
+      return const Center(child: Text('No results found.'));
     }
 
     return ListView.builder(
       itemCount: results.length,
-      itemBuilder: (_, i) {
-        final result = results[i];
-        final posterUrl = result.posterPath != null && result.posterPath!.isNotEmpty
-            ? '$BASE_IMAGE_URL/w92${result.posterPath}'
-            : null;
+      itemBuilder: (_, index) {
+        final result = results[index];
+        final isMovie = result.mediaType == 'movie';
+        final title = isMovie ? result.name : result.name;
+        final id = result.id;
+        final posterPath = isMovie ? result.posterPath : result.posterPath; // Adjust if different for TV
+
+        final posterUrl = (posterPath != null && posterPath.isNotEmpty)
+            ? '$BASE_IMAGE_URL/w200$posterPath'
+            : '';
 
         return ListTile(
-          leading: posterUrl != null
+          leading: posterUrl.isNotEmpty
               ? Image.network(
                   posterUrl,
                   width: 50,
                   fit: BoxFit.cover,
-                  errorBuilder: (_, __, ___) => const Icon(Icons.broken_image),
+                  errorBuilder: (_, __, ___) => Container(
+                    width: 50,
+                    color: Colors.grey.shade300,
+                    child: const Icon(Icons.broken_image),
+                  ),
                 )
-              : const Icon(Icons.image),
-          title: Text(result.name),
-          subtitle: Text(result.mediaType),
+              : Container(
+                  width: 50,
+                  color: Colors.grey.shade300,
+                  child: const Icon(Icons.image),
+                ),
+          title: Text(title),
+          subtitle: Text(isMovie ? 'Movie' : 'TV Show'),
           onTap: () {
-            if (result.mediaType == 'movie') {
-              context.push('/movie/${result.id}');
-            } else if (result.mediaType == 'tv') {
-              context.push('/tv/${result.id}');
-            } else if (result.mediaType == 'person') {
-              context.push('/actor/${result.id}');
-            }
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => isMovie
+                    ? MovieDetailScreen(movieId: id)
+                    : TVShowDetailScreen(tvId: id),
+              ),
+            );
           },
         );
       },

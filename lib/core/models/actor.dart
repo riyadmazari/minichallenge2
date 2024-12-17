@@ -1,3 +1,9 @@
+// lib/core/models/cast_member.dart
+
+import 'package:hive/hive.dart';
+
+part 'actor.g.dart'; // Required for Hive code generation
+
 class Actor {
   final int id;
   final String name;
@@ -67,9 +73,15 @@ class Actor {
 }
 
 // A helper class for cast members to avoid code duplication:
-class CastMember {
+@HiveType(typeId: 3)
+class CastMember extends HiveObject {
+  @HiveField(0)
   final String name;
+
+  @HiveField(1)
   final String? profilePath;
+
+  @HiveField(2)
   final String? character;
 
   CastMember({

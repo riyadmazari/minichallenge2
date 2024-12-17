@@ -1,72 +1,73 @@
-import 'package:go_router/go_router.dart';
+// lib/router/app_router.dart
+
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:minichallenge2/features/details/pages/actor_detail_screen.dart';
+import 'package:minichallenge2/features/details/pages/movie_detail_screen.dart';
+import 'package:minichallenge2/features/details/pages/tv_show_detail_screen.dart';
 
 import '../features/home/pages/home_screen.dart';
-import '../features/search/pages/search_sreen.dart';
-import '../features/details/pages/movie_detail_screen.dart';
-import '../features/details/pages/tv_show_detail_screen.dart';
-import '../features/details/pages/actor_detail_screen.dart';
 import '../features/profile/pages/user_profile_screen.dart';
 import '../features/profile/pages/watchlist_screen.dart';
 import '../features/profile/pages/rated_list_screen.dart';
 
-final router = GoRouter(
-  routes: [
-    GoRoute(
-      path: '/',
-      builder: (_, __) => const HomeScreen(),
-    ),
-    GoRoute(
-      path: '/search',
-      builder: (_, __) => const SearchScreen(),
-    ),
-    GoRoute(
-      path: '/movie/:id',
-      builder: (context, state) {
-        final id = int.tryParse(state.pathParameters['id'] ?? '');
-        if (id == null) {
-          return const Scaffold(
-            body: Center(child: Text('Invalid Movie ID')),
-          );
-        }
-        return MovieDetailScreen(movieId: id);
-      },
-    ),
-    GoRoute(
-      path: '/tv/:id',
-      builder: (context, state) {
-        final id = int.tryParse(state.pathParameters['id'] ?? '');
-        if (id == null) {
-          return const Scaffold(
-            body: Center(child: Text('Invalid TV Show ID')),
-          );
-        }
-        return TVShowDetailScreen(tvId: id);
-      },
-    ),
-    GoRoute(
-      path: '/actor/:id',
-      builder: (context, state) {
-        final id = int.tryParse(state.pathParameters['id'] ?? '');
-        if (id == null) {
-          return const Scaffold(
-            body: Center(child: Text('Invalid Actor ID')),
-          );
-        }
-        return ActorDetailScreen(personId: id);
-      },
-    ),
-    GoRoute(
-      path: '/profile',
-      builder: (_, __) => const UserProfileScreen(),
-    ),
-    GoRoute(
-      path: '/watchlist',
-      builder: (_, __) => const WatchlistScreen(),
-    ),
-    GoRoute(
-      path: '/rated',
-      builder: (_, __) => const RatedListScreen(),
-    ),
-  ],
-);
+class AppRouter {
+  late final GoRouter router;
+
+  AppRouter() {
+    router = GoRouter(
+      routes: [
+        GoRoute(
+          path: '/',
+          name: 'home',
+          builder: (context, state) => const HomeScreen(),
+        ),
+        GoRoute(
+          path: '/profile',
+          name: 'profile',
+          builder: (context, state) => const UserProfileScreen(),
+        ),
+        GoRoute(
+          path: '/watchlist',
+          name: 'watchlist',
+          builder: (context, state) => const WatchlistScreen(),
+        ),
+        GoRoute(
+          path: '/rated',
+          name: 'rated',
+          builder: (context, state) => const RatedListScreen(),
+        ),
+        GoRoute(
+          path: '/movie/:id',
+          name: 'movie_detail',
+          builder: (context, state) {
+            final id = int.tryParse(state.pathParameters['id']!);
+            return id != null
+                ? MovieDetailScreen(movieId: id)
+                : const Scaffold(body: Center(child: Text('Invalid Movie ID')));
+          },
+        ),
+        GoRoute(
+          path: '/tvshow/:id',
+          name: 'tv_show_detail',
+          builder: (context, state) {
+            final id = int.tryParse(state.pathParameters['id']!);
+            return id != null
+                ? TVShowDetailScreen(tvId: id)
+                : const Scaffold(body: Center(child: Text('Invalid TV Show ID')));
+          },
+        ),
+        GoRoute(
+          path: '/actor/:id',
+          name: 'actor_detail',
+          builder: (context, state) {
+            final id = int.tryParse(state.pathParameters['id']!);
+            return id != null
+                ? ActorDetailScreen(personId: id)
+                : const Scaffold(body: Center(child: Text('Invalid Actor ID')));
+          },
+        ),
+      ],
+    );
+  }
+}

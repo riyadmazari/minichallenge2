@@ -1,19 +1,50 @@
+// lib/core/models/tv_show.dart
+
+import 'package:hive/hive.dart';
 import 'actor.dart';
 
-class TVShow {
+part 'tv_show.g.dart'; // Required for Hive code generation
+
+@HiveType(typeId: 1)
+class TVShow extends HiveObject {
+  @HiveField(0)
   final int id;
+
+  @HiveField(1)
   final String name;
+
+  @HiveField(2)
   final String posterPath;
+
+  @HiveField(3)
   final String overview;
+
+  @HiveField(4)
   final String firstAirDate;
+
+  @HiveField(5)
   final double voteAverage;
+
+  @HiveField(6)
   final List<String> genres;
+
+  @HiveField(7)
   final int numberOfSeasons;
+
+  @HiveField(8)
   final int numberOfEpisodes;
-  final List<int>? episodeRunTime;
-  final String? director;
-  final String? pegiRating;
+
+  @HiveField(9)
   final List<CastMember> cast;
+
+  @HiveField(10)
+  final String? director;
+
+  @HiveField(11)
+  final String? pegiRating;
+
+  @HiveField(12)
+  final List<int> episodeRunTime;
 
   TVShow({
     required this.id,
@@ -25,10 +56,10 @@ class TVShow {
     required this.genres,
     required this.numberOfSeasons,
     required this.numberOfEpisodes,
-    this.episodeRunTime,
+    required this.cast,
     this.director,
     this.pegiRating,
-    required this.cast,
+    required this.episodeRunTime,
   });
 
   factory TVShow.fromJson(Map<String, dynamic> json) {
@@ -39,11 +70,11 @@ class TVShow {
       overview: json['overview'] ?? '',
       firstAirDate: json['first_air_date'] ?? '',
       voteAverage: (json['vote_average'] ?? 0).toDouble(),
-      genres: [], // to be filled in fromFullJson
+      genres: [], // To be filled in fromFullJson
       numberOfSeasons: json['number_of_seasons'] ?? 0,
       numberOfEpisodes: json['number_of_episodes'] ?? 0,
-      episodeRunTime: [],
       cast: [],
+      episodeRunTime: [],
     );
   }
 
@@ -55,7 +86,7 @@ class TVShow {
     }
 
     // Parse episode run time
-    List<int>? runtime;
+    List<int> runtime = [];
     if (json['episode_run_time'] != null && json['episode_run_time'] is List) {
       runtime = (json['episode_run_time'] as List).map((r) => r as int).toList();
     }
@@ -83,7 +114,9 @@ class TVShow {
           (r) => r['iso_3166_1'] == 'US',
           orElse: () => results.first,
         );
-        if (ratingInfo != null && ratingInfo['rating'] != null && (ratingInfo['rating'] as String).isNotEmpty) {
+        if (ratingInfo != null &&
+            ratingInfo['rating'] != null &&
+            (ratingInfo['rating'] as String).isNotEmpty) {
           pegiRating = ratingInfo['rating'];
         }
       }
@@ -108,10 +141,10 @@ class TVShow {
       genres: parsedGenres,
       numberOfSeasons: json['number_of_seasons'] ?? 0,
       numberOfEpisodes: json['number_of_episodes'] ?? 0,
-      episodeRunTime: runtime,
+      cast: cast,
       director: director,
       pegiRating: pegiRating,
-      cast: cast,
+      episodeRunTime: runtime,
     );
   }
 }

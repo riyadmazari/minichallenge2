@@ -1,18 +1,43 @@
 // lib/core/models/movie.dart
 
+import 'package:hive/hive.dart';
 import 'actor.dart';
 
-class Movie {
+part 'movie.g.dart'; // Required for Hive code generation
+
+@HiveType(typeId: 0)
+class Movie extends HiveObject {
+  @HiveField(0)
   final int id;
+
+  @HiveField(1)
   final String title;
+
+  @HiveField(2)
   final String posterPath;
+
+  @HiveField(3)
   final String overview;
+
+  @HiveField(4)
   final String releaseDate;
+
+  @HiveField(5)
   final double rating;
+
+  @HiveField(6)
   final List<String> genres;
+
+  @HiveField(7)
   final int runtime;
+
+  @HiveField(8)
   final String? director;
+
+  @HiveField(9)
   final String? pegiRating;
+
+  @HiveField(10)
   final List<CastMember> cast;
 
   Movie({

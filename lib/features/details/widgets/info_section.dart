@@ -1,4 +1,7 @@
+// lib/features/details/widgets/info_section.dart
+
 import 'package:flutter/material.dart';
+import '../../../core/models/tv_show.dart';
 
 class InfoSection extends StatelessWidget {
   final String title;

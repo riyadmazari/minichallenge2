@@ -1,7 +1,21 @@
-class WatchlistItem {
+// lib/core/models/watchlist_item.dart
+
+import 'package:hive/hive.dart';
+
+part 'watchlist_item.g.dart'; // Required for Hive code generation
+
+@HiveType(typeId: 2)
+class WatchlistItem extends HiveObject {
+  @HiveField(0)
   final int id;
+
+  @HiveField(1)
   final bool isMovie;
+
+  @HiveField(2)
   final String title;
+
+  @HiveField(3)
   final String posterPath;
 
   WatchlistItem({
