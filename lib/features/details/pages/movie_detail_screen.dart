@@ -20,7 +20,7 @@ class MovieDetailScreen extends StatelessWidget {
     final tmdbRepository = Provider.of<TMDBRepository>(context, listen: false);
     final watchlistProvider = Provider.of<WatchlistProvider>(context);
     final ratedProvider = Provider.of<RatedProvider>(context);
-    final userRating = ratedProvider.getRating(movieId, true);
+    final userRating = ratedProvider.getRating(movieId, 'movie');
 
     return FutureBuilder<Movie>(
       future: tmdbRepository.getMovieDetails(movieId),
@@ -47,7 +47,7 @@ class MovieDetailScreen extends StatelessWidget {
                 IconButton(
                   icon: Icon(
                     isInWatchlist ? Icons.favorite : Icons.favorite_border,
-                    color: isInWatchlist ? Colors.red : Colors.white,
+                    color: isInWatchlist ? Colors.red : Colors.grey,
                   ),
                   onPressed: () {
                     if (isInWatchlist) {
@@ -134,7 +134,7 @@ class MovieDetailScreen extends StatelessWidget {
   }
 
   void _showRatingDialog(BuildContext context, RatedProvider ratedProvider, Movie movie) {
-    double _currentRating = ratedProvider.getRating(movie.id, true);
+    double _currentRating = ratedProvider.getRating(movie.id, 'movie');
 
     showDialog(
       context: context,
@@ -175,7 +175,7 @@ class MovieDetailScreen extends StatelessWidget {
                   ratedProvider.addOrUpdateRating(
                     Rating(
                       id: movie.id,
-                      isMovie: true,
+                      category: 'movie',
                       title: movie.title,
                       posterPath: movie.posterPath,
                       userRating: _currentRating,

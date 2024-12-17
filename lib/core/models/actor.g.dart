@@ -17,21 +17,24 @@ class CastMemberAdapter extends TypeAdapter<CastMember> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return CastMember(
-      name: fields[0] as String,
-      profilePath: fields[1] as String?,
-      character: fields[2] as String?,
+      id: fields[0] as int,
+      name: fields[1] as String,
+      profilePath: fields[2] as String?,
+      character: fields[3] as String?,
     );
   }
 
   @override
   void write(BinaryWriter writer, CastMember obj) {
     writer
-      ..writeByte(3)
+      ..writeByte(4)
       ..writeByte(0)
-      ..write(obj.name)
+      ..write(obj.id)
       ..writeByte(1)
-      ..write(obj.profilePath)
+      ..write(obj.name)
       ..writeByte(2)
+      ..write(obj.profilePath)
+      ..writeByte(3)
       ..write(obj.character);
   }
 

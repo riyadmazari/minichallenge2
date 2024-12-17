@@ -11,6 +11,7 @@ class Actor {
   final String? birthday;
   final String? deathday;
   final List<Map<String, dynamic>> knownCredits;
+  final String biography;
 
   Actor({
     required this.id,
@@ -19,6 +20,7 @@ class Actor {
     this.birthday,
     this.deathday,
     required this.knownCredits,
+    this.biography = '',
   });
 
   int get age {
@@ -68,23 +70,28 @@ class Actor {
       birthday: json['birthday'],
       deathday: json['deathday'],
       knownCredits: credits,
+      biography: json['biography'] ?? '',
     );
   }
 }
 
 // A helper class for cast members to avoid code duplication:
-@HiveType(typeId: 3)
+@HiveType(typeId: 3) // Ensure this typeId is unique
 class CastMember extends HiveObject {
   @HiveField(0)
-  final String name;
+  final int id; // Add ID field
 
   @HiveField(1)
-  final String? profilePath;
+  final String name;
 
   @HiveField(2)
+  final String? profilePath;
+
+  @HiveField(3)
   final String? character;
 
   CastMember({
+    required this.id,
     required this.name,
     this.profilePath,
     this.character,
@@ -92,6 +99,7 @@ class CastMember extends HiveObject {
 
   factory CastMember.fromJson(Map<String, dynamic> json) {
     return CastMember(
+      id: json['id'] ?? 0,
       name: json['name'] ?? '',
       profilePath: json['profile_path'],
       character: json['character'],

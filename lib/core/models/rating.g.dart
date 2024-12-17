@@ -18,7 +18,7 @@ class RatingAdapter extends TypeAdapter<Rating> {
     };
     return Rating(
       id: fields[0] as int,
-      isMovie: fields[1] as bool,
+      category: fields[1] as String,
       title: fields[2] as String,
       posterPath: fields[3] as String,
       userRating: fields[4] as double,
@@ -32,7 +32,7 @@ class RatingAdapter extends TypeAdapter<Rating> {
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
-      ..write(obj.isMovie)
+      ..write(obj.category)
       ..writeByte(2)
       ..write(obj.title)
       ..writeByte(3)

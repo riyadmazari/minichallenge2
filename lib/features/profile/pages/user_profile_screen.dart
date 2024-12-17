@@ -6,6 +6,8 @@ import 'package:provider/provider.dart';
 import '../../../core/providers/user_profile_provider.dart';
 import 'watchlist_screen.dart';
 import 'rated_list_screen.dart';
+import '../../../core/providers/theme_provider.dart';
+
 
 class UserProfileScreen extends StatelessWidget {
   const UserProfileScreen({Key? key}) : super(key: key);
@@ -21,7 +23,7 @@ class UserProfileScreen extends StatelessWidget {
       case 'rated':
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (_) => const RatedListScreen()),
+          MaterialPageRoute(builder: (_) => const RatingScreen()),
         );
         break;
       default:
@@ -31,6 +33,8 @@ class UserProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
+    bool isDarkMode = themeProvider.themeMode == ThemeMode.dark;
     return Consumer<UserProfileProvider>(
       builder: (context, userProfileProvider, child) {
         final userProfile = userProfileProvider.userProfile;
@@ -63,11 +67,13 @@ class UserProfileScreen extends StatelessWidget {
                 const SizedBox(height: 20),
                 // Dark Theme Toggle
                 SwitchListTile(
-                  title: const Text('Dark Theme'),
-                  value: userProfile.isDarkTheme,
+                  title: const Text('Dark Mode'),
+                  subtitle: const Text('Enable dark theme'),
+                  value: isDarkMode,
                   onChanged: (bool value) {
-                    userProfileProvider.toggleDarkTheme();
+                    themeProvider.toggleTheme(value);
                   },
+                  secondary: const Icon(Icons.dark_mode),
                 ),
                 const SizedBox(height: 20),
                 // Subscribed Services

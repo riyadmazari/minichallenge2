@@ -5,11 +5,10 @@ import 'package:go_router/go_router.dart';
 import 'package:minichallenge2/features/details/pages/actor_detail_screen.dart';
 import 'package:minichallenge2/features/details/pages/movie_detail_screen.dart';
 import 'package:minichallenge2/features/details/pages/tv_show_detail_screen.dart';
-
-import '../features/home/pages/home_screen.dart';
-import '../features/profile/pages/user_profile_screen.dart';
-import '../features/profile/pages/watchlist_screen.dart';
-import '../features/profile/pages/rated_list_screen.dart';
+import 'package:minichallenge2/features/home/pages/home_screen.dart';
+import 'package:minichallenge2/features/profile/pages/user_profile_screen.dart';
+import 'package:minichallenge2/features/profile/pages/watchlist_screen.dart';
+import 'package:minichallenge2/features/profile/pages/rated_list_screen.dart';
 
 class AppRouter {
   late final GoRouter router;
@@ -35,7 +34,7 @@ class AppRouter {
         GoRoute(
           path: '/rated',
           name: 'rated',
-          builder: (context, state) => const RatedListScreen(),
+          builder: (context, state) => const RatingScreen(),
         ),
         GoRoute(
           path: '/movie/:id',
@@ -44,7 +43,9 @@ class AppRouter {
             final id = int.tryParse(state.pathParameters['id']!);
             return id != null
                 ? MovieDetailScreen(movieId: id)
-                : const Scaffold(body: Center(child: Text('Invalid Movie ID')));
+                : const Scaffold(
+                    body: Center(child: Text('Invalid Movie ID')),
+                  );
           },
         ),
         GoRoute(
@@ -54,7 +55,9 @@ class AppRouter {
             final id = int.tryParse(state.pathParameters['id']!);
             return id != null
                 ? TVShowDetailScreen(tvId: id)
-                : const Scaffold(body: Center(child: Text('Invalid TV Show ID')));
+                : const Scaffold(
+                    body: Center(child: Text('Invalid TV Show ID')),
+                  );
           },
         ),
         GoRoute(
@@ -64,8 +67,15 @@ class AppRouter {
             final id = int.tryParse(state.pathParameters['id']!);
             return id != null
                 ? ActorDetailScreen(personId: id)
-                : const Scaffold(body: Center(child: Text('Invalid Actor ID')));
+                : const Scaffold(
+                    body: Center(child: Text('Invalid Actor ID')),
+                  );
           },
+        ),
+        GoRoute(
+          path: '/ratings',
+          name: 'ratings',
+          builder: (context, state) => const RatingScreen(),
         ),
       ],
     );

@@ -4,13 +4,13 @@ import 'package:hive/hive.dart';
 
 part 'rating.g.dart'; // Required for Hive code generation
 
-@HiveType(typeId: 4) // Assign a unique typeId (ensure it's not used by other models)
+@HiveType(typeId: 4) // Ensure this typeId is unique across your project
 class Rating extends HiveObject {
   @HiveField(0)
   final int id;
 
   @HiveField(1)
-  final bool isMovie;
+  final String category; // 'movie', 'tv', 'actor'
 
   @HiveField(2)
   final String title;
@@ -19,33 +19,33 @@ class Rating extends HiveObject {
   final String posterPath;
 
   @HiveField(4)
-  final double userRating;
+  double userRating;
 
   Rating({
     required this.id,
-    required this.isMovie,
+    required this.category,
     required this.title,
     required this.posterPath,
     required this.userRating,
   });
 
+  factory Rating.fromMap(Map<String, dynamic> map) {
+    return Rating(
+      id: map['id'],
+      category: map['category'],
+      title: map['title'],
+      posterPath: map['posterPath'],
+      userRating: map['userRating'],
+    );
+  }
+
   Map<String, dynamic> toMap() {
     return {
       'id': id,
-      'isMovie': isMovie,
+      'category': category,
       'title': title,
       'posterPath': posterPath,
       'userRating': userRating,
     };
-  }
-
-  factory Rating.fromMap(Map<String, dynamic> map) {
-    return Rating(
-      id: map['id'],
-      isMovie: map['isMovie'],
-      title: map['title'],
-      posterPath: map['posterPath'],
-      userRating: (map['userRating'] as num).toDouble(),
-    );
   }
 }
