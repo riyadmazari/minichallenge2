@@ -53,7 +53,6 @@ class RatedProvider with ChangeNotifier {
 
   // Optional: Remove rating
   Future<void> removeRating(int id, String category) async {
-    final ratingsBox = Hive.box<Rating>('ratings');
     final rating = _ratings[category]![id];
     if (rating != null) {
       await rating.delete();
