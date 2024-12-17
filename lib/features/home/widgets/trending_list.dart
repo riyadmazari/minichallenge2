@@ -1,5 +1,11 @@
+// lib/features/home/widgets/trending_list.dart
+
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
+import '../../../core/models/movie.dart';
+import '../../../core/models/tv_show.dart';
+import '../../../core/utils/constants.dart';
+import '../../details/pages/movie_detail_screen.dart';
+import '../../details/pages/tv_show_detail_screen.dart';
 
 class TrendingList extends StatelessWidget {
   final List<dynamic> items;
@@ -25,13 +31,37 @@ class TrendingList extends StatelessWidget {
         itemBuilder: (_, index) {
           final item = items[index];
 
-          final title = isMovie ? item.title : item.name;
-          final id = item.id;
-          final route = isMovie ? '/movie/$id' : '/tv/$id';
-          final posterUrl = 'https://image.tmdb.org/t/p/w200${item.posterPath}';
+          String title = '';
+          int id = 0;
+          String posterPath = '';
+
+          if (isMovie && item is Movie) {
+            title = item.title;
+            id = item.id;
+            posterPath = item.posterPath;
+          } else if (!isMovie && item is TVShow) {
+            title = item.name;
+            id = item.id;
+            posterPath = item.posterPath;
+          } else {
+            return const SizedBox.shrink(); // Invalid item type
+          }
+
+          final posterUrl = posterPath.isNotEmpty
+              ? '$BASE_IMAGE_URL/w200$posterPath'
+              : '';
 
           return GestureDetector(
-            onTap: () => context.push(route),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => isMovie
+                      ? MovieDetailScreen(movieId: id)
+                      : TVShowDetailScreen(tvId: id),
+                ),
+              );
+            },
             child: Container(
               width: 140,
               margin: const EdgeInsets.symmetric(horizontal: 8),
@@ -39,11 +69,15 @@ class TrendingList extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   AspectRatio(
-                    aspectRatio: 2/3,
+                    aspectRatio: 2 / 3,
                     child: posterUrl.isNotEmpty
                         ? Image.network(
                             posterUrl,
                             fit: BoxFit.cover,
+                            errorBuilder: (_, __, ___) => Container(
+                              color: Colors.grey.shade300,
+                              child: const Icon(Icons.broken_image),
+                            ),
                           )
                         : Container(
                             color: Colors.grey.shade300,

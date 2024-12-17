@@ -8,6 +8,7 @@ class SearchProvider with ChangeNotifier {
   List<String> searchHistory = [];
   List<SearchResult> currentResults = [];
   bool isLoading = false;
+  String errorMessage = '';
 
   SearchProvider(this.repository) {
     _loadHistory();
@@ -32,18 +33,22 @@ class SearchProvider with ChangeNotifier {
       searchHistory.removeLast();
     }
     await _saveHistory();
+    notifyListeners();
   }
 
   Future<void> search(String query) async {
+    if (query.isEmpty) return;
     isLoading = true;
+    errorMessage = '';
     notifyListeners();
     try {
       final results = await repository.searchAll(query);
       currentResults = results;
       await saveSearchTerm(query);
     } catch (e) {
-      // Handle errors gracefully
+      errorMessage = 'Failed to perform search.';
       currentResults = [];
+      print('SearchProvider Error: $e');
     } finally {
       isLoading = false;
       notifyListeners();

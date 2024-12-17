@@ -1,8 +1,10 @@
-import 'package:flutter/material.dart' hide SearchBar;
+// lib/features/search/pages/search_screen.dart
+
+import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/providers/search_provider.dart';
-import '../widgets/search_bar.dart';
+import '../widgets/search_bar.dart' as custom;
 import '../widgets/search_history_list.dart';
 import '../widgets/search_results_list.dart';
 
@@ -24,7 +26,7 @@ class _SearchScreenState extends State<SearchScreen> {
       ),
       body: Column(
         children: [
-          SearchBar(
+          custom.SearchBar(
             onSubmit: (query) {
               if (query.isNotEmpty) {
                 context.read<SearchProvider>().search(query);
@@ -47,9 +49,13 @@ class _SearchScreenState extends State<SearchScreen> {
           Expanded(
             child: searchProvider.isLoading
                 ? const Center(child: CircularProgressIndicator())
-                : SearchResultsList(
-                    results: searchProvider.currentResults,
-                  ),
+                : searchProvider.errorMessage.isNotEmpty
+                    ? Center(child: Text(searchProvider.errorMessage))
+                    : searchProvider.currentResults.isNotEmpty
+                        ? SearchResultsList(
+                            results: searchProvider.currentResults,
+                          )
+                        : const Center(child: Text('No results')),
           ),
         ],
       ),

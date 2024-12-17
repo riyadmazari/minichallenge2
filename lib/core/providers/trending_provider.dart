@@ -10,9 +10,11 @@ class TrendingProvider with ChangeNotifier {
   List<Movie> trendingMovies = [];
   List<TVShow> trendingTVShows = [];
   bool isLoading = false;
+  String errorMessage = '';
 
   Future<void> loadTrending() async {
     isLoading = true;
+    errorMessage = '';
     notifyListeners();
     try {
       final movies = await repository.fetchTrendingMovies();
@@ -20,7 +22,8 @@ class TrendingProvider with ChangeNotifier {
       trendingMovies = movies;
       trendingTVShows = tvShows;
     } catch (e) {
-      // Handle error gracefully, maybe set an error state
+      errorMessage = 'Failed to load trending items.';
+      print('TrendingProvider Error: $e');
     } finally {
       isLoading = false;
       notifyListeners();

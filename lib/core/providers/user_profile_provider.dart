@@ -39,4 +39,9 @@ class UserProfileProvider with ChangeNotifier {
     await prefs.setStringList('subscribedServices', profile.subscribedServices);
     notifyListeners();
   }
+
+  Future<void> toggleDarkTheme(bool isDark) async {
+    _profile = _profile.copyWith(isDarkTheme: isDark);
+    await updateProfile(_profile);
+  }
 }

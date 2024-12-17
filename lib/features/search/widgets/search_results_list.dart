@@ -1,7 +1,10 @@
+// lib/features/search/widgets/search_results_list.dart
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/models/search_result.dart';
+import '../../../core/utils/constants.dart';
 
 class SearchResultsList extends StatelessWidget {
   final List<SearchResult> results;
@@ -19,12 +22,17 @@ class SearchResultsList extends StatelessWidget {
       itemBuilder: (_, i) {
         final result = results[i];
         final posterUrl = result.posterPath != null && result.posterPath!.isNotEmpty
-            ? 'https://image.tmdb.org/t/p/w92${result.posterPath}'
+            ? '$BASE_IMAGE_URL/w92${result.posterPath}'
             : null;
 
         return ListTile(
           leading: posterUrl != null
-              ? Image.network(posterUrl, width: 50, fit: BoxFit.cover)
+              ? Image.network(
+                  posterUrl,
+                  width: 50,
+                  fit: BoxFit.cover,
+                  errorBuilder: (_, __, ___) => const Icon(Icons.broken_image),
+                )
               : const Icon(Icons.image),
           title: Text(result.name),
           subtitle: Text(result.mediaType),

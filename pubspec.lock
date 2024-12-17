@@ -116,10 +116,18 @@ packages:
     dependency: "direct main"
     description:
       name: go_router
-      sha256: "6d1607d76bb3a6ef52947ddae870948b9fd5bc7a5d1ef992ec4bed2fc2006fc3"
+      sha256: "2fd11229f59e23e967b0775df8d5948a519cd7e1e8b6e849729e010587b46539"
       url: "https://pub.dev"
     source: hosted
-    version: "5.2.4"
+    version: "14.6.2"
+  http:
+    dependency: "direct main"
+    description:
+      name: http
+      sha256: b9c29a161230ee03d3ccf545097fccd9b87a5264228c5d348202e0f0c28f9010
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.2.2"
   http_parser:
     dependency: transitive
     description:
@@ -132,10 +140,10 @@ packages:
     dependency: "direct main"
     description:
       name: intl
-      sha256: "910f85bce16fb5c6f614e117efa303e85a1731bb0081edf3604a2ae6e9a3cc91"
+      sha256: "00f33b908655e606b86d2ade4710a231b802eec6f11e87e4ea3783fd72077a50"
       url: "https://pub.dev"
     source: hosted
-    version: "0.17.0"
+    version: "0.20.1"
   leak_tracker:
     dependency: transitive
     description:

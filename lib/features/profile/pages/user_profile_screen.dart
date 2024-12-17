@@ -52,7 +52,7 @@ class UserProfileScreen extends StatelessWidget {
             title: const Text('Dark Theme'),
             value: profile.isDarkTheme,
             onChanged: (val) {
-              provider.updateProfile(profile.copyWith(isDarkTheme: val));
+              provider.toggleDarkTheme(val);
             },
           ),
           ListTile(
@@ -94,7 +94,7 @@ class UserProfileScreen extends StatelessWidget {
             onTap: () => context.push('/watchlist'),
           ),
           ListTile(
-            title: const Text('My Rated Movies/TV'),
+            title: const Text('My Rated Movies/TV Shows'),
             onTap: () => context.push('/rated'),
           ),
         ],

@@ -11,7 +11,7 @@ class TVShow {
   final int numberOfSeasons;
   final int numberOfEpisodes;
   final List<int>? episodeRunTime;
-  final String? director; // Not always available for TV; we try to find a "Director" from credits
+  final String? director;
   final String? pegiRating;
   final List<CastMember> cast;
 
@@ -39,7 +39,7 @@ class TVShow {
       overview: json['overview'] ?? '',
       firstAirDate: json['first_air_date'] ?? '',
       voteAverage: (json['vote_average'] ?? 0).toDouble(),
-      genres: [],
+      genres: [], // to be filled in fromFullJson
       numberOfSeasons: json['number_of_seasons'] ?? 0,
       numberOfEpisodes: json['number_of_episodes'] ?? 0,
       episodeRunTime: [],
@@ -54,39 +54,48 @@ class TVShow {
       parsedGenres = (json['genres'] as List).map((g) => g['name'] as String).toList();
     }
 
-    // Parse runtime (episode_run_time)
-    List<int> runtime = [];
+    // Parse episode run time
+    List<int>? runtime;
     if (json['episode_run_time'] != null && json['episode_run_time'] is List) {
       runtime = (json['episode_run_time'] as List).map((r) => r as int).toList();
     }
 
-    // Parse director from crew if any
+    // Parse director from credits
     String? director;
     if (json['credits'] != null && json['credits']['crew'] is List) {
       final crew = json['credits']['crew'] as List;
-      final dir = crew.firstWhere((c) => c['job'] == 'Director', orElse: () => null);
-      if (dir != null) director = dir['name'];
+      final directorCrew = crew.firstWhere(
+        (c) => c['job'] == 'Director',
+        orElse: () => null,
+      );
+      if (directorCrew != null) {
+        director = directorCrew['name'];
+      }
     }
 
-    // Parse cast
-    List<CastMember> cast = [];
-    if (json['credits'] != null && json['credits']['cast'] is List) {
-      cast = (json['credits']['cast'] as List)
-          .map((c) => CastMember.fromJson(c))
-          .toList();
-    }
-
-    // PEGI for TV: from content_ratings
+    // Parse PEGI rating from content_ratings
     String? pegiRating;
     if (json['content_ratings'] != null && json['content_ratings']['results'] is List) {
       final results = json['content_ratings']['results'] as List;
       if (results.isNotEmpty) {
-        // Try to find a rating, e.g. US or first available
-        final ratingInfo = results.firstWhere((r) => r['iso_3166_1'] == 'US', orElse: () => results.first);
+        // Try to find a rating, e.g., US or first available
+        final ratingInfo = results.firstWhere(
+          (r) => r['iso_3166_1'] == 'US',
+          orElse: () => results.first,
+        );
         if (ratingInfo != null && ratingInfo['rating'] != null && (ratingInfo['rating'] as String).isNotEmpty) {
           pegiRating = ratingInfo['rating'];
         }
       }
+    }
+
+    // Parse cast (first 5)
+    List<CastMember> cast = [];
+    if (json['credits'] != null && json['credits']['cast'] is List) {
+      cast = (json['credits']['cast'] as List)
+          .map((c) => CastMember.fromJson(c))
+          .take(5)
+          .toList();
     }
 
     return TVShow(

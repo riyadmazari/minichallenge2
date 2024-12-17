@@ -1,4 +1,6 @@
-import 'actor.dart'; // for cast members
+// lib/core/models/movie.dart
+
+import 'actor.dart';
 
 class Movie {
   final int id;
@@ -35,8 +37,8 @@ class Movie {
       overview: json['overview'] ?? '',
       releaseDate: json['release_date'] ?? '',
       rating: (json['vote_average'] ?? 0).toDouble(),
-      genres: [], // will be updated in fromFullJson
-      runtime: 0, // will be updated in fromFullJson
+      genres: [], // to be filled in fromFullJson
+      runtime: 0, // to be filled in fromFullJson
       cast: [],
     );
   }
@@ -51,26 +53,20 @@ class Movie {
     // Parse runtime
     final runtime = json['runtime'] ?? 0;
 
-    // Parse director
+    // Parse director from credits
     String? director;
     if (json['credits'] != null && json['credits']['crew'] is List) {
       final crew = json['credits']['crew'] as List;
-      final dir = crew.firstWhere((c) => c['job'] == 'Director', orElse: () => null);
-      if (dir != null) {
-        director = dir['name'];
+      final directorCrew = crew.firstWhere(
+        (c) => c['job'] == 'Director',
+        orElse: () => null,
+      );
+      if (directorCrew != null) {
+        director = directorCrew['name'];
       }
     }
 
-    // Parse cast (first 3 or more)
-    List<CastMember> cast = [];
-    if (json['credits'] != null && json['credits']['cast'] is List) {
-      cast = (json['credits']['cast'] as List)
-          .map((c) => CastMember.fromJson(c))
-          .toList();
-    }
-
-    // Parse PEGI rating (movie): from release_dates
-    // We look for US or first country to get certification
+    // Parse PEGI rating from release_dates
     String? pegiRating;
     if (json['release_dates'] != null && json['release_dates']['results'] is List) {
       final results = json['release_dates']['results'] as List;
@@ -83,6 +79,15 @@ class Movie {
           }
         }
       }
+    }
+
+    // Parse cast (first 5)
+    List<CastMember> cast = [];
+    if (json['credits'] != null && json['credits']['cast'] is List) {
+      cast = (json['credits']['cast'] as List)
+          .map((c) => CastMember.fromJson(c))
+          .take(5)
+          .toList();
     }
 
     return Movie(
