@@ -11,6 +11,9 @@ Watch the video demonstration of the app here:
 [![Demo Video](./demo.mp4)](./demo.mp4)  
 *(Click to watch the video)*
 
+In case you can't play the video on your compuuter, you can access it using this link:
+https://drive.google.com/drive/folders/1zebOWvN-qp4IL-PSkddvJmTO_SD0skeD?usp=drive_link
+
 ---
 
 ## 🚀 **Features**
